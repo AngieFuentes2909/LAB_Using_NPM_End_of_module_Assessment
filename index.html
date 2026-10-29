@@ -6,9 +6,59 @@
   <title>Explorador APOD</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
-  <main>
-    <h1>Explorador APOD</h1>
+<body class="min-vh-100 py-4">
+
+  <main class="container" align="center">
+    
+    <!-- Encabezado -->
+    <header class="header">
+      <h1>Explorador APOD</h1>
+    </header>
+
+    <!-- 1. Buscador Arriba -->
+    <section class="search-section">
+      <form id="search-form">
+        <input type="date" id="apod-date" min="1995-06-16">
+        <button type="submit" id="btn-search">Buscar</button>
+      </form>
+      <!-- Contenedor para mensajes de error o validación -->
+      <div id="error-message" class="error-message"></div>
+    </section>
+
+    <!-- 2. Card Abajo Título Imagen Descripción -->
+    <article class="apod-card">
+      
+      <!-- Título de la APOD -->
+      <header class="card-header">
+        <h2 id="apod-titulo"></h2>
+      </header>
+
+      <!-- Contenido Multimedia (Imagen o Video) -->
+      <div class="card-media">
+        <img id="apod-image" src="" alt="" style="display: none;">
+        <div id="video-container" style="display: none;">
+        </div>
+      </div>
+
+      <!-- Descripción -->
+      <div class="card-body">
+        <h3>Descripción</h3>
+        <p id="apod-descripcion"></p>
+      </div>
+
+      <!-- Botón de Favoritos -->
+      <button class="card-footer" id="btn-favorite" type="button"> Guardar en favoritos</button>
+
+    </article>
+
+    <!-- 3. Lista de Favoritos -->
+    <section class="favorites-section">
+      <h3>Mis Favoritos</h3>
+      <ul id="favorites-list">
+        
+      </ul>
+    </section>
+
   </main>
 
   <script src="node_modules/dayjs/dayjs.min.js"></script>
