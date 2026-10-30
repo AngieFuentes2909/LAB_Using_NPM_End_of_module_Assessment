@@ -1,7 +1,7 @@
 {
   "name": "explorador-apod",
   "version": "1.0.0",
-  "description": "",
+  "description": "Aplicación web interactiva para explorar la **Foto Astronómica del Día (APOD)** publicada por la NASA. Permite consultar la publicación actual, buscar contenido astronómico desde el 16 de junio de 1995 hasta la fecha y gestionar una lista de favoritos persistente.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,5 +12,13 @@
   "type": "commonjs",
   "dependencies": {
     "dayjs": "^1.11.23"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AngieFuentes2909/LAB_Using_NPM_End_of_module_Assessment.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AngieFuentes2909/LAB_Using_NPM_End_of_module_Assessment/issues"
+  },
+  "homepage": "https://github.com/AngieFuentes2909/LAB_Using_NPM_End_of_module_Assessment#readme"
 }

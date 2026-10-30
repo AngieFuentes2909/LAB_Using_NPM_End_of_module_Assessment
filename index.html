@@ -7,8 +7,28 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <main>
+  <header>
     <h1>Explorador APOD</h1>
+  </header>
+
+  <main>
+    <section class="buscador">
+      <label for="fecha-input">Selecciona una fecha (desde el 16 de junio de 1995):</label>
+      <input type="date" id="fecha-input" min="1995-06-16">
+      <button id="buscar-btn" type="button">Buscar APOD</button>
+      <p id="mensaje" class="mensaje" role="alert"></p>
+    </section>
+
+    <section id="apod" class="apod">
+      <p id="estado" class="estado"></p>
+      <article id="contenido" hidden>
+        <h2 id="titulo"></h2>
+        <p id="fecha" class="fecha"></p>
+        <img id="imagen" src="" alt="">
+        <a id="enlace-video" href="#" target="_blank" rel="noopener" hidden>Ver el video en NASA</a>
+        <div id="explicacion" class="explicacion"></div>
+      </article>
+    </section>
   </main>
 
   <script src="node_modules/dayjs/dayjs.min.js"></script>
@@ -16,4 +36,3 @@
   <script src="js/app.js"></script>
 </body>
 </html>
-
