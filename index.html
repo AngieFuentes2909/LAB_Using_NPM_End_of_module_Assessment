@@ -38,17 +38,11 @@
     </section>
   </main>
 
+  <!-- Day.js: CDN para funcionamiento en GitHub Pages y node_modules para entorno local NPM -->
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/locale/es.js"></script>
   <script src="node_modules/dayjs/dayjs.min.js"></script>
   <script src="node_modules/dayjs/locale/es.js"></script>
-  <script>
-    // Respaldo: si node_modules no existe (sitio desplegado), carga Day.js desde CDN
-    if (typeof dayjs === "undefined") {
-      document.write(
-        '<script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"><\/script>' +
-        '<script src="https://cdn.jsdelivr.net/npm/dayjs@1/locale/es.js"><\/script>'
-      );
-    }
-  </script>
   <script src="js/app.js"></script>
 </body>
 </html>
