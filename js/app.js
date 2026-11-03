@@ -15,6 +15,8 @@ const fechaTexto = document.getElementById("fecha");
 const imagen = document.getElementById("imagen");
 const enlaceVideo = document.getElementById("enlace-video");
 const explicacion = document.getElementById("explicacion");
+const botonFavorito = document.getElementById("btn-favorite");
+const listaFavoritos = document.getElementById("lista-favoritos");
 
 // Aquí se guarda la APOD que se está viendo (la usa la funcionalidad de favoritos)
 let apodActual = null;
@@ -117,6 +119,61 @@ function configurarInputFecha() {
   inputFecha.min = PRIMERA_APOD;
   inputFecha.max = dayjs().format("YYYY-MM-DD");
 }
+
+// ===== FUNCIONALIDAD 3: Favoritos =====
+// Leer datos guardados o iniciar arreglo vacío si es null
+let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
+
+function renderizarFavoritos() {
+  if (!listaFavoritos) return;
+  listaFavoritos.innerHTML = ""; // Limpiar lista antes de redibujar
+
+  favoritos.forEach(fav => {
+    const li = document.createElement("li");
+    li.textContent = `${fav.title} (${fav.date})`;
+    li.style.cursor = "pointer";
+    
+    // Al hacer clic, cargar la APOD de esa fecha
+    li.addEventListener("click", () => {
+      mostrarMensaje(""); // Limpiar errores
+      cargarAPOD(`${API_BASE}/${formatearParaAPI(fav.date)}`);
+    });
+
+    listaFavoritos.appendChild(li);
+  });
+}
+
+function guardarFavorito() {
+  if (!apodActual) return;
+
+  // Evitar duplicados revisando si la fecha ya está guardada
+  const yaExiste = favoritos.some(fav => fav.date === apodActual.date);
+  
+  if (yaExiste) {
+    mostrarMensaje("Esta APOD ya está en tus favoritos.");
+    return;
+  }
+
+  // Guardar solo lo necesario: fecha y título
+  const nuevoFavorito = {
+    title: apodActual.title,
+    date: apodActual.date
+  };
+
+  favoritos.push(nuevoFavorito);
+  
+  // Guardar en localStorage convirtiendo el arreglo a texto
+  localStorage.setItem("favoritos", JSON.stringify(favoritos));
+  
+  mostrarMensaje("¡Guardado en favoritos!", false);
+  renderizarFavoritos();
+}
+
+// Configurar evento y carga inicial
+if (botonFavorito) {
+  botonFavorito.addEventListener("click", guardarFavorito);
+}
+renderizarFavoritos();
 
 // ===== Inicio =====
 configurarInputFecha();
