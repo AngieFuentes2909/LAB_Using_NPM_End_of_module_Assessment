@@ -1,8 +1,10 @@
 // ===== Configuración =====
 dayjs.locale("es");
+console.log(dayjs().format("D [de] MMMM [de] YYYY"));
 
 const API_BASE = "https://science.nasa.gov/wp-json/wp/v2/apod-basic";
 const PRIMERA_APOD = "1995-06-16";
+const CLAVE_FAVORITOS = "apod_favoritos";
 
 // ===== Elementos del DOM =====
 const inputFecha = document.getElementById("fecha-input");
@@ -16,10 +18,15 @@ const imagen = document.getElementById("imagen");
 const enlaceVideo = document.getElementById("enlace-video");
 const explicacion = document.getElementById("explicacion");
 
+// Elementos de Favoritos (Rol 4)
+const botonGuardarFavorito = document.getElementById("guardar-favorito-btn");
+const mensajeFavorito = document.getElementById("mensaje-favorito");
+const listaFavoritos = document.getElementById("lista-favoritos");
+
 // Aquí se guarda la APOD que se está viendo (la usa la funcionalidad de favoritos)
 let apodActual = null;
 
-// ===== FUNCIONALIDAD 1: mostrar APOD  =====
+// ===== FUNCIONALIDAD 1: mostrar APOD =====
 function mostrarEstado(texto, esError = false) {
   estado.textContent = texto;
   estado.classList.toggle("error", esError);
@@ -47,6 +54,7 @@ function mostrarAPOD(apod) {
 
   contenido.hidden = false;
   apodActual = apod;
+  mostrarMensajeFavorito("");
 }
 
 async function cargarAPOD(url, esLista = false) {
@@ -118,7 +126,93 @@ function configurarInputFecha() {
   inputFecha.max = dayjs().format("YYYY-MM-DD");
 }
 
+// ===== FUNCIONALIDAD 3 (ROL 4): Sistema de Favoritos y Persistencia =====
+function mostrarMensajeFavorito(texto, esError = false) {
+  if (!mensajeFavorito) return;
+  mensajeFavorito.textContent = texto;
+  mensajeFavorito.classList.toggle("error", esError);
+}
+
+function obtenerFavoritos() {
+  try {
+    const guardados = localStorage.getItem(CLAVE_FAVORITOS);
+    return guardados ? JSON.parse(guardados) : [];
+  } catch (e) {
+    console.error("Error al recuperar favoritos de localStorage:", e);
+    return [];
+  }
+}
+
+function guardarEnLocalStorage(favoritos) {
+  try {
+    localStorage.setItem(CLAVE_FAVORITOS, JSON.stringify(favoritos));
+  } catch (e) {
+    console.error("Error al guardar favoritos en localStorage:", e);
+  }
+}
+
+function guardarFavoritoActual() {
+  if (!apodActual) {
+    mostrarMensajeFavorito("No hay ninguna APOD disponible para guardar.", true);
+    return;
+  }
+
+  const favoritos = obtenerFavoritos();
+
+  // Validación estricta con some() para evitar duplicados
+  const yaExiste = favoritos.some((fav) => fav.date === apodActual.date);
+  if (yaExiste) {
+    mostrarMensajeFavorito("Esta APOD ya se encuentra en tus favoritos.", true);
+    return;
+  }
+
+  favoritos.push(apodActual);
+  guardarEnLocalStorage(favoritos);
+  mostrarMensajeFavorito("¡APOD agregada a favoritos con éxito!", false);
+  renderizarFavoritos();
+}
+
+function renderizarFavoritos() {
+  if (!listaFavoritos) return;
+  const favoritos = obtenerFavoritos();
+  listaFavoritos.innerHTML = "";
+
+  if (favoritos.length === 0) {
+    const liVacio = document.createElement("li");
+    liVacio.textContent = "Aún no tienes favoritos guardados.";
+    liVacio.className = "favorito-vacio";
+    listaFavoritos.appendChild(liVacio);
+    return;
+  }
+
+  favoritos.forEach((fav) => {
+    const li = document.createElement("li");
+    li.className = "favorito-item";
+
+    const botonCargar = document.createElement("button");
+    botonCargar.type = "button";
+    botonCargar.className = "favorito-btn";
+    botonCargar.textContent = `${fav.title} (${dayjs(fav.date).format("D [de] MMMM [de] YYYY")})`;
+    
+    // Al hacer clic, carga la APOD en pantalla
+    botonCargar.addEventListener("click", () => {
+      mostrarAPOD(fav);
+      mostrarMensajeFavorito(`Visualizando: "${fav.title}"`, false);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    li.appendChild(botonCargar);
+    listaFavoritos.appendChild(li);
+  });
+}
+
 // ===== Inicio =====
 configurarInputFecha();
 botonBuscar.addEventListener("click", buscarPorFecha);
+
+if (botonGuardarFavorito) {
+  botonGuardarFavorito.addEventListener("click", guardarFavoritoActual);
+}
+
+renderizarFavoritos();
 cargarAPODDeHoy();
